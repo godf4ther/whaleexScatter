@@ -1,7 +1,7 @@
 /* global window */
 
 import PluginRepository from './PluginRepository';
-import BrigeAPI from './BrigeAPI';
+import WebViewBridge from './WebViewBridge';
 import WhaleexEOS from './WhaleexEOS';
 import WhaleexIdentitys from './WhaleexIdentitys';
 
@@ -79,14 +79,14 @@ export default class WhaleexScatter {
   }
 
   getVersion() {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'getVersion',
       payload: {}
     });
   }
 
   getIdentity(requiredFields) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'getOrRequestIdentity',
       payload: {
         fields: requiredFields
@@ -98,7 +98,7 @@ export default class WhaleexScatter {
   }
 
   getIdentityFromPermissions() {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'identityFromPermissions',
       payload: {}
     }).then((id) => {
@@ -108,7 +108,7 @@ export default class WhaleexScatter {
   }
 
   forgetIdentity() {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'forgetIdentity',
       payload: {}
     }).then((res) => {
@@ -118,14 +118,14 @@ export default class WhaleexScatter {
   }
 
   authenticate(nonce) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'authenticate',
       payload: { nonce }
     });
   }
 
   getArbitrarySignature(publicKey, data, whatfor = '', isHash = false) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'requestArbitrarySignature',
       payload: {
         publicKey,
@@ -137,21 +137,21 @@ export default class WhaleexScatter {
   }
 
   getPublicKey(blockchain) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'getPublicKey',
       payload: { blockchain }
     });
   }
 
   linkAccount(publicKey, network) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'linkAccount',
       payload: { publicKey, network }
     });
   }
 
   hasAccountFor(network) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'hasAccountFor',
       payload: {
         network
@@ -160,7 +160,7 @@ export default class WhaleexScatter {
   }
 
   suggestNetwork(network) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'requestAddNetwork',
       payload: {
         network
@@ -170,21 +170,21 @@ export default class WhaleexScatter {
 
   requestTransfer(network, to, amount, options = {}) {
     const payload = { network, to, amount, options };
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'requestTransfer',
       payload
     });
   }
 
   requestSignature(payload) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'requestSignature',
       payload
     });
   }
 
   createTransaction(blockchain, actions, account, network) {
-    return BrigeAPI.sendAsync({
+    return WebViewBridge.sendAsync({
       type: 'createTransaction',
       payload: {
         blockchain,
@@ -198,5 +198,5 @@ export default class WhaleexScatter {
 
 window.WhaleexScatter = WhaleexScatter;
 window.WhaleexEOS = WhaleexEOS;
-window.BrigeAPI = BrigeAPI;
+window.WebViewBridge = WebViewBridge;
 window.WhaleexIdentitys = WhaleexIdentitys;

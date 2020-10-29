@@ -27,129 +27,6 @@ _Object$defineProperty(exports, "__esModule", {
 
 exports.default = void 0;
 
-var _map = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/map"));
-
-var _stringify = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/json/stringify"));
-
-var _promise = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/promise"));
-
-var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/classCallCheck"));
-
-var _createClass2 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/createClass"));
-
-var _now = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/date/now"));
-
-var _WhaleexIdentitys = _interopRequireDefault(require("./WhaleexIdentitys"));
-
-/* global window */
-var genId = function genId() {
-  return ((0, _now.default)() * 100 + Math.floor(Math.random() * 100)).toString(32);
-};
-
-var BrigeAPI = /*#__PURE__*/function () {
-  function BrigeAPI() {
-    (0, _classCallCheck2.default)(this, BrigeAPI);
-  }
-
-  (0, _createClass2.default)(BrigeAPI, null, [{
-    key: "sendAsync",
-    value: function sendAsync(payload) {
-      payload.id = payload.id || genId();
-      return new _promise.default(function (resolve, reject) {
-        BrigeAPI.callbacks.set(payload.id, function (error, data) {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(data);
-          }
-        });
-
-        switch (payload.type) {
-          case 'requestSignature':
-            return BrigeAPI.postMessage('signEOS', payload.id, {
-              data: (0, _stringify.default)(payload.payload.transaction)
-            });
-
-          case 'requestArbitrarySignature':
-            return BrigeAPI.postMessage('signEOSMsg', payload.id, {
-              data: (0, _stringify.default)(payload.payload)
-            });
-
-          case 'getOrRequestIdentity':
-          case 'identityFromPermissions':
-          case 'authenticate':
-            return BrigeAPI.sendResponse(payload.id, _WhaleexIdentitys.default.eos);
-
-          case 'forgetIdentity':
-          case 'requestAddNetwork':
-            return BrigeAPI.sendResponse(payload.id, true);
-
-          case 'getVersion':
-            return BrigeAPI.sendResponse(payload.id, '9.6.0');
-
-          case 'getPublicKey':
-            return BrigeAPI.sendResponse(payload.id, _WhaleexIdentitys.default.eos.publicKey);
-
-          case 'linkAccount':
-          case 'hasAccountFor':
-          case 'requestTransfer':
-          case 'createTransaction':
-            // all resolve to false
-            return BrigeAPI.sendResponse(payload.id, false);
-
-          default:
-            return BrigeAPI.sendError(payload.id, new Error('unknow method'));
-        }
-      });
-    }
-  }, {
-    key: "sendResponse",
-    value: function sendResponse(id, result) {
-      var callback = BrigeAPI.callbacks.get(id);
-
-      if (callback) {
-        callback(null, result);
-        BrigeAPI.callbacks.delete(id);
-      }
-    }
-  }, {
-    key: "sendError",
-    value: function sendError(id, error) {
-      var callback = BrigeAPI.callbacks.get(id);
-
-      if (callback) {
-        callback(error, null);
-        BrigeAPI.callbacks.delete(id);
-      }
-    }
-  }, {
-    key: "postMessage",
-    value: function postMessage(handler, id, data) {
-      window.tinyBrige[handler]({
-        name: handler,
-        object: data,
-        id: id
-      });
-    }
-  }]);
-  return BrigeAPI;
-}();
-
-exports.default = BrigeAPI;
-BrigeAPI.callbacks = new _map.default();
-},{"./WhaleexIdentitys":8,"@babel/runtime-corejs2/core-js/date/now":10,"@babel/runtime-corejs2/core-js/json/stringify":11,"@babel/runtime-corejs2/core-js/map":12,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31}],3:[function(require,module,exports){
-"use strict";
-
-var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");
-
-var _Object$defineProperty = require("@babel/runtime-corejs2/core-js/object/define-property");
-
-_Object$defineProperty(exports, "__esModule", {
-  value: true
-});
-
-exports.default = void 0;
-
 var _parseInt2 = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/parse-int"));
 
 var _assign = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/object/assign"));
@@ -238,7 +115,7 @@ var Network = /*#__PURE__*/function () {
 }();
 
 exports.default = Network;
-},{"./Blockchains":1,"@babel/runtime-corejs2/core-js/json/stringify":11,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/parse-int":19,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31}],4:[function(require,module,exports){
+},{"./Blockchains":1,"@babel/runtime-corejs2/core-js/json/stringify":11,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/parse-int":19,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31}],3:[function(require,module,exports){
 "use strict";
 
 var _interopRequireWildcard = require("@babel/runtime-corejs2/helpers/interopRequireWildcard");
@@ -297,7 +174,7 @@ var Plugin = /*#__PURE__*/function () {
 }();
 
 exports.default = Plugin;
-},{"./PluginTypes":6,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/helpers/interopRequireWildcard":32}],5:[function(require,module,exports){
+},{"./PluginTypes":5,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/helpers/interopRequireWildcard":32}],4:[function(require,module,exports){
 "use strict";
 
 var _interopRequireWildcard = require("@babel/runtime-corejs2/helpers/interopRequireWildcard");
@@ -412,7 +289,7 @@ var PluginRepositorySingleton = /*#__PURE__*/function () {
 var PluginRepository = new PluginRepositorySingleton();
 var _default = PluginRepository;
 exports.default = _default;
-},{"./PluginTypes":6,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/helpers/asyncToGenerator":26,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/helpers/interopRequireWildcard":32,"@babel/runtime-corejs2/regenerator":36}],6:[function(require,module,exports){
+},{"./PluginTypes":5,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/helpers/asyncToGenerator":26,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/helpers/interopRequireWildcard":32,"@babel/runtime-corejs2/regenerator":36}],5:[function(require,module,exports){
 "use strict";
 
 var _Object$defineProperty = require("@babel/runtime-corejs2/core-js/object/define-property");
@@ -424,7 +301,148 @@ _Object$defineProperty(exports, "__esModule", {
 exports.BLOCKCHAIN_SUPPORT = void 0;
 var BLOCKCHAIN_SUPPORT = 'blockchain_support';
 exports.BLOCKCHAIN_SUPPORT = BLOCKCHAIN_SUPPORT;
-},{"@babel/runtime-corejs2/core-js/object/define-property":15}],7:[function(require,module,exports){
+},{"@babel/runtime-corejs2/core-js/object/define-property":15}],6:[function(require,module,exports){
+"use strict";
+
+var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");
+
+var _Object$defineProperty = require("@babel/runtime-corejs2/core-js/object/define-property");
+
+_Object$defineProperty(exports, "__esModule", {
+  value: true
+});
+
+exports.default = void 0;
+
+var _map = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/map"));
+
+var _stringify = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/json/stringify"));
+
+var _promise = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/promise"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime-corejs2/helpers/createClass"));
+
+var _now = _interopRequireDefault(require("@babel/runtime-corejs2/core-js/date/now"));
+
+var _WhaleexIdentitys = _interopRequireDefault(require("./WhaleexIdentitys"));
+
+/* global window */
+var genId = function genId() {
+  return ((0, _now.default)() * 100 + Math.floor(Math.random() * 100)).toString(32);
+};
+
+var WebViewBridge = /*#__PURE__*/function () {
+  function WebViewBridge() {
+    (0, _classCallCheck2.default)(this, WebViewBridge);
+  }
+
+  (0, _createClass2.default)(WebViewBridge, null, [{
+    key: "sendAsync",
+    value: function sendAsync(payload) {
+      payload.id = payload.id || genId();
+      return new _promise.default(function (resolve, reject) {
+        WebViewBridge.callbacks.set(payload.id, function (error, data) {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(data);
+          }
+        });
+
+        switch (payload.type) {
+          case 'requestSignature':
+            return WebViewBridge.postMessage('eos_signTransaction', payload.id, payload.payload.transaction);
+
+          case 'requestArbitrarySignature':
+            return WebViewBridge.postMessage('eos_signMessage', payload.id, payload.payload);
+
+          case 'getOrRequestIdentity':
+          case 'identityFromPermissions':
+          case 'authenticate':
+            {
+              return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos);
+            }
+
+          case 'forgetIdentity':
+          case 'requestAddNetwork':
+            return WebViewBridge.sendResponse(payload.id, true);
+
+          case 'getVersion':
+            return WebViewBridge.sendResponse(payload.id, '9.6.0');
+
+          case 'getPublicKey':
+            {
+              return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos.publicKey);
+            }
+
+          case 'linkAccount':
+          case 'hasAccountFor':
+          case 'requestTransfer':
+          case 'createTransaction':
+            // all resolve to false
+            return WebViewBridge.sendResponse(payload.id, false);
+
+          default:
+            return WebViewBridge.sendError(payload.id, new Error('unknow method'));
+        }
+      });
+    }
+  }, {
+    key: "requestAccountSuccess",
+    value: function requestAccountSuccess(id, result) {
+      var account = result.account,
+          publicKey = result.publicKey;
+
+      _WhaleexIdentitys.default.initEOS(account, publicKey);
+
+      var callback = WebViewBridge.callbacks.get(id);
+
+      if (callback) {
+        callback(null, _WhaleexIdentitys.default.eos);
+        WebViewBridge.callbacks.delete(id);
+      }
+    }
+  }, {
+    key: "sendResponse",
+    value: function sendResponse(id, result) {
+      var callback = WebViewBridge.callbacks.get(id);
+
+      if (callback) {
+        callback(null, result);
+        WebViewBridge.callbacks.delete(id);
+      }
+    }
+  }, {
+    key: "sendError",
+    value: function sendError(id, error) {
+      var callback = WebViewBridge.callbacks.get(id);
+
+      if (callback) {
+        callback(error instanceof Error ? error : new Error(error), null);
+        WebViewBridge.callbacks.delete(id);
+      }
+    }
+  }, {
+    key: "postMessage",
+    value: function postMessage(method, id, params) {
+      window.ReactNativeWebView.postMessage((0, _stringify.default)({
+        type: 'ScatterRequest',
+        payload: {
+          id: id,
+          method: method,
+          params: params
+        }
+      }));
+    }
+  }]);
+  return WebViewBridge;
+}();
+
+exports.default = WebViewBridge;
+WebViewBridge.callbacks = new _map.default();
+},{"./WhaleexIdentitys":8,"@babel/runtime-corejs2/core-js/date/now":10,"@babel/runtime-corejs2/core-js/json/stringify":11,"@babel/runtime-corejs2/core-js/map":12,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31}],7:[function(require,module,exports){
 "use strict";
 
 var _interopRequireWildcard = require("@babel/runtime-corejs2/helpers/interopRequireWildcard");
@@ -467,7 +485,7 @@ var _Blockchains = require("./Blockchains");
 
 var PluginTypes = _interopRequireWildcard(require("./PluginTypes"));
 
-var _BrigeAPI = _interopRequireDefault(require("./BrigeAPI"));
+var _WebViewBridge = _interopRequireDefault(require("./WebViewBridge"));
 
 function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = (0, _getPrototypeOf2.default)(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = (0, _getPrototypeOf2.default)(this).constructor; result = (0, _construct.default)(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return (0, _possibleConstructorReturn2.default)(this, result); }; }
 
@@ -500,7 +518,7 @@ var WhaleexEOS = /*#__PURE__*/function (_Plugin) {
             requiredFields: {}
           });
 
-          _BrigeAPI.default.sendAsync({
+          _WebViewBridge.default.sendAsync({
             type: 'requestSignature',
             payload: payload
           }).then(function (x) {
@@ -580,7 +598,7 @@ var WhaleexEOS = /*#__PURE__*/function (_Plugin) {
                             requiredFields: requiredFields.requiredFields
                           });
                           _context2.next = 5;
-                          return _BrigeAPI.default.sendAsync({
+                          return _WebViewBridge.default.sendAsync({
                             type: 'requestSignature',
                             payload: payload
                           });
@@ -677,7 +695,7 @@ var WhaleexEOS = /*#__PURE__*/function (_Plugin) {
 }(_Plugin2.default);
 
 exports.default = WhaleexEOS;
-},{"./Blockchains":1,"./BrigeAPI":2,"./Network":3,"./Plugin":4,"./PluginTypes":6,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/core-js/reflect/construct":21,"@babel/runtime-corejs2/helpers/asyncToGenerator":26,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/getPrototypeOf":29,"@babel/runtime-corejs2/helpers/inherits":30,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/helpers/interopRequireWildcard":32,"@babel/runtime-corejs2/helpers/possibleConstructorReturn":33,"@babel/runtime-corejs2/regenerator":36}],8:[function(require,module,exports){
+},{"./Blockchains":1,"./Network":2,"./Plugin":3,"./PluginTypes":5,"./WebViewBridge":6,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/core-js/reflect/construct":21,"@babel/runtime-corejs2/helpers/asyncToGenerator":26,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/getPrototypeOf":29,"@babel/runtime-corejs2/helpers/inherits":30,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/helpers/interopRequireWildcard":32,"@babel/runtime-corejs2/helpers/possibleConstructorReturn":33,"@babel/runtime-corejs2/regenerator":36}],8:[function(require,module,exports){
 "use strict";
 
 var _interopRequireDefault = require("@babel/runtime-corejs2/helpers/interopRequireDefault");
@@ -754,7 +772,7 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime-corejs2/helpe
 
 var _PluginRepository = _interopRequireDefault(require("./PluginRepository"));
 
-var _BrigeAPI = _interopRequireDefault(require("./BrigeAPI"));
+var _WebViewBridge = _interopRequireDefault(require("./WebViewBridge"));
 
 var _WhaleexEOS = _interopRequireDefault(require("./WhaleexEOS"));
 
@@ -892,7 +910,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "getVersion",
     value: function getVersion() {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'getVersion',
         payload: {}
       });
@@ -902,7 +920,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
     value: function getIdentity(requiredFields) {
       var _this2 = this;
 
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'getOrRequestIdentity',
         payload: {
           fields: requiredFields
@@ -917,7 +935,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
     value: function getIdentityFromPermissions() {
       var _this3 = this;
 
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'identityFromPermissions',
         payload: {}
       }).then(function (id) {
@@ -930,7 +948,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
     value: function forgetIdentity() {
       var _this4 = this;
 
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'forgetIdentity',
         payload: {}
       }).then(function (res) {
@@ -941,7 +959,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "authenticate",
     value: function authenticate(nonce) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'authenticate',
         payload: {
           nonce: nonce
@@ -953,7 +971,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
     value: function getArbitrarySignature(publicKey, data) {
       var whatfor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : '';
       var isHash = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'requestArbitrarySignature',
         payload: {
           publicKey: publicKey,
@@ -966,7 +984,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "getPublicKey",
     value: function getPublicKey(blockchain) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'getPublicKey',
         payload: {
           blockchain: blockchain
@@ -976,7 +994,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "linkAccount",
     value: function linkAccount(publicKey, network) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'linkAccount',
         payload: {
           publicKey: publicKey,
@@ -987,7 +1005,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "hasAccountFor",
     value: function hasAccountFor(network) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'hasAccountFor',
         payload: {
           network: network
@@ -997,7 +1015,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "suggestNetwork",
     value: function suggestNetwork(network) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'requestAddNetwork',
         payload: {
           network: network
@@ -1014,7 +1032,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
         amount: amount,
         options: options
       };
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'requestTransfer',
         payload: payload
       });
@@ -1022,7 +1040,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "requestSignature",
     value: function requestSignature(payload) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'requestSignature',
         payload: payload
       });
@@ -1030,7 +1048,7 @@ var WhaleexScatter = /*#__PURE__*/function () {
   }, {
     key: "createTransaction",
     value: function createTransaction(blockchain, actions, account, network) {
-      return _BrigeAPI.default.sendAsync({
+      return _WebViewBridge.default.sendAsync({
         type: 'createTransaction',
         payload: {
           blockchain: blockchain,
@@ -1047,9 +1065,9 @@ var WhaleexScatter = /*#__PURE__*/function () {
 exports.default = WhaleexScatter;
 window.WhaleexScatter = WhaleexScatter;
 window.WhaleexEOS = _WhaleexEOS.default;
-window.BrigeAPI = _BrigeAPI.default;
+window.WebViewBridge = _WebViewBridge.default;
 window.WhaleexIdentitys = _WhaleexIdentitys.default;
-},{"./BrigeAPI":2,"./PluginRepository":5,"./WhaleexEOS":7,"./WhaleexIdentitys":8,"@babel/runtime-corejs2/core-js/map":12,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/helpers/asyncToGenerator":26,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/regenerator":36}],10:[function(require,module,exports){
+},{"./PluginRepository":4,"./WebViewBridge":6,"./WhaleexEOS":7,"./WhaleexIdentitys":8,"@babel/runtime-corejs2/core-js/map":12,"@babel/runtime-corejs2/core-js/object/assign":13,"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/core-js/promise":20,"@babel/runtime-corejs2/helpers/asyncToGenerator":26,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31,"@babel/runtime-corejs2/regenerator":36}],10:[function(require,module,exports){
 module.exports = require("core-js/library/fn/date/now");
 },{"core-js/library/fn/date/now":37}],11:[function(require,module,exports){
 module.exports = require("core-js/library/fn/json/stringify");

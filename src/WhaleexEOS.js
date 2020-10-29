@@ -2,7 +2,7 @@ import Plugin from './Plugin';
 import Network from './Network';
 import { Blockchains } from './Blockchains';
 import * as PluginTypes from './PluginTypes';
-import BrigeAPI from './BrigeAPI';
+import WebViewBridge from './WebViewBridge';
 
 // const ProxyPolyfill = require('./proxyPolyfill');
 
@@ -23,7 +23,7 @@ export default class WhaleexEOS extends Plugin {
           network,
           requiredFields: {}
         });
-        BrigeAPI.sendAsync({
+        WebViewBridge.sendAsync({
           type: 'requestSignature',
           payload
         })
@@ -69,7 +69,7 @@ export default class WhaleexEOS extends Plugin {
                   network,
                   requiredFields: requiredFields.requiredFields
                 });
-                const result = await BrigeAPI.sendAsync({
+                const result = await WebViewBridge.sendAsync({
                   type: 'requestSignature',
                   payload
                 });
