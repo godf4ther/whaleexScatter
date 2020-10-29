@@ -1,7 +1,7 @@
 {
-  "name": "tinyscatter",
+  "name": "whaleexscatter",
   "version": "0.0.1",
-  "description": "a tiny scatter warp",
+  "description": "a whaleex scatter warp",
   "main": "src/index.js",
   "scripts": {
     "lint": "eslint --quiet --fix ./src",
@@ -14,7 +14,7 @@
     "wallet",
     "web"
   ],
-  "author": "xuewuli",
+  "author": "godfather",
   "license": "MIT",
   "dependencies": {
     "@babel/runtime-corejs2": "^7.5.4"

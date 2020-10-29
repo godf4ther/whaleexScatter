@@ -1,0 +1,5 @@
+{
+  "mangle": {
+    "reserved": ["WhaleexScatter","WhaleexEOS", "WhaleexETH", "WhaleexTRX", "WhaleexIdentitys"]
+  }
+}

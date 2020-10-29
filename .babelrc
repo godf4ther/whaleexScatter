@@ -1,0 +1,22 @@
+{
+  "presets": [
+    [
+      "@babel/env",
+      {
+        "targets": {
+          "browsers": [
+            "ios >= 8",
+            "android >= 4.2"
+          ]
+        }
+      }
+    ]
+  ],
+  
+  "plugins": [
+    ["@babel/plugin-transform-runtime", {
+      "corejs": 2,
+      "helpers": true,
+      "regenerator": true,
+    }]
+  ]}
