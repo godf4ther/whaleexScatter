@@ -1,0 +1,37 @@
+{
+  "name": "tinyscatter",
+  "version": "0.0.1",
+  "description": "a tiny scatter warp",
+  "main": "src/index.js",
+  "scripts": {
+    "lint": "eslint --quiet --fix ./src",
+    "build": "rm -rf ./build && babel ./src -d ./build && browserify ./build/index.js > ./dist/WhaleexScatter.js && uglifyjs ./dist/WhaleexScatter.js > ./dist/WhaleexScatter_min.js && node buildTool/toStringExport.js"
+  },
+  "keywords": [
+    "scatter",
+    "eos",
+    "eth",
+    "wallet",
+    "web"
+  ],
+  "author": "xuewuli",
+  "license": "MIT",
+  "dependencies": {
+    "@babel/runtime-corejs2": "^7.5.4"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.0",
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-transform-runtime": "^7.5.0",
+    "@babel/preset-env": "^7.5.4",
+    "browserify": "^16.3.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^13.2.0",
+    "eslint-config-prettier": "^3.6.0",
+    "eslint-plugin-import": "^2.18.1",
+    "eslint-plugin-prettier": "^2.6.2",
+    "fs-extra": "^8.1.0",
+    "prettier": "^1.18.2",
+    "uglify-js": "^3.6.0"
+  }
+}
