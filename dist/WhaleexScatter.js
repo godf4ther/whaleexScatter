@@ -362,7 +362,11 @@ var WebViewBridge = /*#__PURE__*/function () {
           case 'identityFromPermissions':
           case 'authenticate':
             {
-              return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos);
+              if (_WhaleexIdentitys.default.isEOSInit) {
+                return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos);
+              } else {
+                return WebViewBridge.postMessage('eos_requestAccounts', payload.id);
+              }
             }
 
           case 'forgetIdentity':
@@ -374,7 +378,11 @@ var WebViewBridge = /*#__PURE__*/function () {
 
           case 'getPublicKey':
             {
-              return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos.publicKey);
+              if (_WhaleexIdentitys.default.isEOSInit) {
+                return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos.publicKey);
+              } else {
+                WebViewBridge.sendError(payload.id, new Error('User rejected the request'));
+              }
             }
 
           case 'linkAccount':

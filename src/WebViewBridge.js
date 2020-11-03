@@ -24,7 +24,11 @@ export default class WebViewBridge {
         case 'getOrRequestIdentity':
         case 'identityFromPermissions':
         case 'authenticate': {
-          return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos);
+          if (WhaleexIdentitys.isEOSInit) {
+            return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos);
+          } else {
+            return WebViewBridge.postMessage('eos_requestAccounts', payload.id);
+          }
         }
         case 'forgetIdentity':
         case 'requestAddNetwork':
@@ -32,7 +36,11 @@ export default class WebViewBridge {
         case 'getVersion':
           return WebViewBridge.sendResponse(payload.id, '9.6.0');
         case 'getPublicKey': {
-          return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos.publicKey);
+          if (WhaleexIdentitys.isEOSInit) {
+            return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos.publicKey);
+          } else {
+            WebViewBridge.sendError(payload.id, new Error('User rejected the request'))
+          }
         }
         case 'linkAccount':
         case 'hasAccountFor':
