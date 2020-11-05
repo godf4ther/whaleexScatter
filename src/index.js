@@ -41,7 +41,7 @@ export default class WhaleexScatter {
   }
 
   async isInstalled() {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => {
         resolve(false);
       }, 10000);
@@ -51,7 +51,7 @@ export default class WhaleexScatter {
   }
 
   async connect(pluginName, options) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       if (!pluginName || !pluginName.length) {
         throw new Error('You must specify a name for this connection');
       }
@@ -81,7 +81,39 @@ export default class WhaleexScatter {
   getVersion() {
     return WebViewBridge.sendAsync({
       type: 'getVersion',
-      payload: {}
+      payload: {},
+    });
+  }
+
+  login(requiredFields) {
+    return WebViewBridge.sendAsync({
+      type: 'getOrRequestIdentity',
+      payload: {
+        fields: requiredFields,
+      },
+    }).then(id => {
+      if (id) this.identity = id;
+      return id;
+    });
+  }
+
+  checkLogin() {
+    return WebViewBridge.sendAsync({
+      type: 'identityFromPermissions',
+      payload: {},
+    }).then(id => {
+      if (id) this.identity = id;
+      return id;
+    });
+  }
+
+  logout() {
+    return WebViewBridge.sendAsync({
+      type: 'forgetIdentity',
+      payload: {},
+    }).then(res => {
+      this.identity = null;
+      return res;
     });
   }
 
@@ -89,9 +121,9 @@ export default class WhaleexScatter {
     return WebViewBridge.sendAsync({
       type: 'getOrRequestIdentity',
       payload: {
-        fields: requiredFields
-      }
-    }).then((id) => {
+        fields: requiredFields,
+      },
+    }).then(id => {
       if (id) this.identity = id;
       return id;
     });
@@ -100,8 +132,8 @@ export default class WhaleexScatter {
   getIdentityFromPermissions() {
     return WebViewBridge.sendAsync({
       type: 'identityFromPermissions',
-      payload: {}
-    }).then((id) => {
+      payload: {},
+    }).then(id => {
       if (id) this.identity = id;
       return id;
     });
@@ -110,8 +142,8 @@ export default class WhaleexScatter {
   forgetIdentity() {
     return WebViewBridge.sendAsync({
       type: 'forgetIdentity',
-      payload: {}
-    }).then((res) => {
+      payload: {},
+    }).then(res => {
       this.identity = null;
       return res;
     });
@@ -120,7 +152,7 @@ export default class WhaleexScatter {
   authenticate(nonce) {
     return WebViewBridge.sendAsync({
       type: 'authenticate',
-      payload: { nonce }
+      payload: { nonce },
     });
   }
 
@@ -131,22 +163,22 @@ export default class WhaleexScatter {
         publicKey,
         data,
         whatfor,
-        isHash
-      }
+        isHash,
+      },
     });
   }
 
   getPublicKey(blockchain) {
     return WebViewBridge.sendAsync({
       type: 'getPublicKey',
-      payload: { blockchain }
+      payload: { blockchain },
     });
   }
 
   linkAccount(publicKey, network) {
     return WebViewBridge.sendAsync({
       type: 'linkAccount',
-      payload: { publicKey, network }
+      payload: { publicKey, network },
     });
   }
 
@@ -154,8 +186,8 @@ export default class WhaleexScatter {
     return WebViewBridge.sendAsync({
       type: 'hasAccountFor',
       payload: {
-        network
-      }
+        network,
+      },
     });
   }
 
@@ -163,8 +195,8 @@ export default class WhaleexScatter {
     return WebViewBridge.sendAsync({
       type: 'requestAddNetwork',
       payload: {
-        network
-      }
+        network,
+      },
     });
   }
 
@@ -172,14 +204,14 @@ export default class WhaleexScatter {
     const payload = { network, to, amount, options };
     return WebViewBridge.sendAsync({
       type: 'requestTransfer',
-      payload
+      payload,
     });
   }
 
   requestSignature(payload) {
     return WebViewBridge.sendAsync({
       type: 'requestSignature',
-      payload
+      payload,
     });
   }
 
@@ -190,8 +222,8 @@ export default class WhaleexScatter {
         blockchain,
         actions,
         account,
-        network
-      }
+        network,
+      },
     });
   }
 }

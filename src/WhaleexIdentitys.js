@@ -7,19 +7,30 @@ class WhaleexEOSIdentity {
       {
         name: account,
         authority: 'active',
-        blockchain: 'eos'
-      }
+        blockchain: 'eos',
+      },
     ];
     this.kyc = false;
   }
 }
 
-export default class WhaleexIdentitys {
-  static initEOS(account, publicKey) {
-    WhaleexIdentitys.eos = new WhaleexEOSIdentity(account, publicKey);
+class WhaleexIdentitys {
+  constructor() {
+    this.isEOSInstall = false;
+    this.eos = null;
+    this.eth = null;
+    this.trx = null;
+  }
+
+  installEOS(account, publicKey) {
+    this.isEOSInstall = true;
+    this.eos = new WhaleexEOSIdentity(account, publicKey);
+  }
+
+  uninstallEOS() {
+    this.isEOSInstall = false;
+    this.eos = null;
   }
 }
 
-WhaleexIdentitys.eos = null;
-WhaleexIdentitys.eth = null;
-WhaleexIdentitys.trx = null;
+export default new WhaleexIdentitys();

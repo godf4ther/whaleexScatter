@@ -358,11 +358,14 @@ var WebViewBridge = /*#__PURE__*/function () {
           case 'requestArbitrarySignature':
             return WebViewBridge.postMessage('eos_signMessage', payload.id, payload.payload);
 
+          case 'requestTransfer':
+            return WebViewBridge.postMessage('eos_sendTransaction', payload.id, payload.payload);
+
           case 'getOrRequestIdentity':
           case 'identityFromPermissions':
           case 'authenticate':
             {
-              if (_WhaleexIdentitys.default.isEOSInit) {
+              if (_WhaleexIdentitys.default.isEOSInstall) {
                 return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos);
               } else {
                 return WebViewBridge.postMessage('eos_requestAccounts', payload.id);
@@ -370,15 +373,21 @@ var WebViewBridge = /*#__PURE__*/function () {
             }
 
           case 'forgetIdentity':
+            {
+              _WhaleexIdentitys.default.uninstallEOS();
+
+              return WebViewBridge.sendResponse(payload.id, true);
+            }
+
           case 'requestAddNetwork':
             return WebViewBridge.sendResponse(payload.id, true);
 
           case 'getVersion':
-            return WebViewBridge.sendResponse(payload.id, '9.6.0');
+            return WebViewBridge.sendResponse(payload.id, '1.0.0');
 
           case 'getPublicKey':
             {
-              if (_WhaleexIdentitys.default.isEOSInit) {
+              if (_WhaleexIdentitys.default.isEOSInstall) {
                 return WebViewBridge.sendResponse(payload.id, _WhaleexIdentitys.default.eos.publicKey);
               } else {
                 WebViewBridge.sendError(payload.id, new Error('User rejected the request'));
@@ -387,7 +396,6 @@ var WebViewBridge = /*#__PURE__*/function () {
 
           case 'linkAccount':
           case 'hasAccountFor':
-          case 'requestTransfer':
           case 'createTransaction':
             // all resolve to false
             return WebViewBridge.sendResponse(payload.id, false);
@@ -400,10 +408,11 @@ var WebViewBridge = /*#__PURE__*/function () {
   }, {
     key: "requestAccountSuccess",
     value: function requestAccountSuccess(id, result) {
+      console.log('requestAccountSuccess', result);
       var account = result.account,
           publicKey = result.publicKey;
 
-      _WhaleexIdentitys.default.initEOS(account, publicKey);
+      _WhaleexIdentitys.default.installEOS(account, publicKey);
 
       var callback = WebViewBridge.callbacks.get(id);
 
@@ -415,6 +424,7 @@ var WebViewBridge = /*#__PURE__*/function () {
   }, {
     key: "sendResponse",
     value: function sendResponse(id, result) {
+      console.log('sendResponse', result);
       var callback = WebViewBridge.callbacks.get(id);
 
       if (callback) {
@@ -425,6 +435,7 @@ var WebViewBridge = /*#__PURE__*/function () {
   }, {
     key: "sendError",
     value: function sendError(id, error) {
+      console.log('sendError', error);
       var callback = WebViewBridge.callbacks.get(id);
 
       if (callback) {
@@ -736,21 +747,31 @@ var WhaleexEOSIdentity = function WhaleexEOSIdentity(account, publicKey) {
 var WhaleexIdentitys = /*#__PURE__*/function () {
   function WhaleexIdentitys() {
     (0, _classCallCheck2.default)(this, WhaleexIdentitys);
+    this.isEOSInstall = false;
+    this.eos = null;
+    this.eth = null;
+    this.trx = null;
   }
 
-  (0, _createClass2.default)(WhaleexIdentitys, null, [{
-    key: "initEOS",
-    value: function initEOS(account, publicKey) {
-      WhaleexIdentitys.eos = new WhaleexEOSIdentity(account, publicKey);
+  (0, _createClass2.default)(WhaleexIdentitys, [{
+    key: "installEOS",
+    value: function installEOS(account, publicKey) {
+      this.isEOSInstall = true;
+      this.eos = new WhaleexEOSIdentity(account, publicKey);
+    }
+  }, {
+    key: "uninstallEOS",
+    value: function uninstallEOS() {
+      this.isEOSInstall = false;
+      this.eos = null;
     }
   }]);
   return WhaleexIdentitys;
 }();
 
-exports.default = WhaleexIdentitys;
-WhaleexIdentitys.eos = null;
-WhaleexIdentitys.eth = null;
-WhaleexIdentitys.trx = null;
+var _default = new WhaleexIdentitys();
+
+exports.default = _default;
 },{"@babel/runtime-corejs2/core-js/object/define-property":15,"@babel/runtime-corejs2/helpers/classCallCheck":27,"@babel/runtime-corejs2/helpers/createClass":28,"@babel/runtime-corejs2/helpers/interopRequireDefault":31}],9:[function(require,module,exports){
 "use strict";
 
@@ -924,8 +945,8 @@ var WhaleexScatter = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "getIdentity",
-    value: function getIdentity(requiredFields) {
+    key: "login",
+    value: function login(requiredFields) {
       var _this2 = this;
 
       return _WebViewBridge.default.sendAsync({
@@ -939,8 +960,8 @@ var WhaleexScatter = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "getIdentityFromPermissions",
-    value: function getIdentityFromPermissions() {
+    key: "checkLogin",
+    value: function checkLogin() {
       var _this3 = this;
 
       return _WebViewBridge.default.sendAsync({
@@ -952,8 +973,8 @@ var WhaleexScatter = /*#__PURE__*/function () {
       });
     }
   }, {
-    key: "forgetIdentity",
-    value: function forgetIdentity() {
+    key: "logout",
+    value: function logout() {
       var _this4 = this;
 
       return _WebViewBridge.default.sendAsync({
@@ -961,6 +982,47 @@ var WhaleexScatter = /*#__PURE__*/function () {
         payload: {}
       }).then(function (res) {
         _this4.identity = null;
+        return res;
+      });
+    }
+  }, {
+    key: "getIdentity",
+    value: function getIdentity(requiredFields) {
+      var _this5 = this;
+
+      return _WebViewBridge.default.sendAsync({
+        type: 'getOrRequestIdentity',
+        payload: {
+          fields: requiredFields
+        }
+      }).then(function (id) {
+        if (id) _this5.identity = id;
+        return id;
+      });
+    }
+  }, {
+    key: "getIdentityFromPermissions",
+    value: function getIdentityFromPermissions() {
+      var _this6 = this;
+
+      return _WebViewBridge.default.sendAsync({
+        type: 'identityFromPermissions',
+        payload: {}
+      }).then(function (id) {
+        if (id) _this6.identity = id;
+        return id;
+      });
+    }
+  }, {
+    key: "forgetIdentity",
+    value: function forgetIdentity() {
+      var _this7 = this;
+
+      return _WebViewBridge.default.sendAsync({
+        type: 'forgetIdentity',
+        payload: {}
+      }).then(function (res) {
+        _this7.identity = null;
         return res;
       });
     }

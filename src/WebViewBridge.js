@@ -21,30 +21,34 @@ export default class WebViewBridge {
           return WebViewBridge.postMessage('eos_signTransaction', payload.id, payload.payload.transaction);
         case 'requestArbitrarySignature':
           return WebViewBridge.postMessage('eos_signMessage', payload.id, payload.payload);
+        case 'requestTransfer':
+          return WebViewBridge.postMessage('eos_sendTransaction', payload.id, payload.payload);
         case 'getOrRequestIdentity':
         case 'identityFromPermissions':
         case 'authenticate': {
-          if (WhaleexIdentitys.isEOSInit) {
+          if (WhaleexIdentitys.isEOSInstall) {
             return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos);
           } else {
             return WebViewBridge.postMessage('eos_requestAccounts', payload.id);
           }
         }
-        case 'forgetIdentity':
+        case 'forgetIdentity': {
+          WhaleexIdentitys.uninstallEOS();
+          return WebViewBridge.sendResponse(payload.id, true);
+        }
         case 'requestAddNetwork':
           return WebViewBridge.sendResponse(payload.id, true);
         case 'getVersion':
-          return WebViewBridge.sendResponse(payload.id, '9.6.0');
+          return WebViewBridge.sendResponse(payload.id, '1.0.0');
         case 'getPublicKey': {
-          if (WhaleexIdentitys.isEOSInit) {
+          if (WhaleexIdentitys.isEOSInstall) {
             return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos.publicKey);
           } else {
-            WebViewBridge.sendError(payload.id, new Error('User rejected the request'))
+            WebViewBridge.sendError(payload.id, new Error('User rejected the request'));
           }
         }
         case 'linkAccount':
         case 'hasAccountFor':
-        case 'requestTransfer':
         case 'createTransaction':
           // all resolve to false
           return WebViewBridge.sendResponse(payload.id, false);
@@ -55,8 +59,9 @@ export default class WebViewBridge {
   }
 
   static requestAccountSuccess(id, result) {
+    console.log('requestAccountSuccess', result);
     const { account, publicKey } = result;
-    WhaleexIdentitys.initEOS(account, publicKey);
+    WhaleexIdentitys.installEOS(account, publicKey);
     const callback = WebViewBridge.callbacks.get(id);
     if (callback) {
       callback(null, WhaleexIdentitys.eos);
@@ -65,6 +70,7 @@ export default class WebViewBridge {
   }
 
   static sendResponse(id, result) {
+    console.log('sendResponse', result);
     const callback = WebViewBridge.callbacks.get(id);
     if (callback) {
       callback(null, result);
@@ -73,6 +79,7 @@ export default class WebViewBridge {
   }
 
   static sendError(id, error) {
+    console.log('sendError', error);
     const callback = WebViewBridge.callbacks.get(id);
     if (callback) {
       callback(error instanceof Error ? error : new Error(error), null);
