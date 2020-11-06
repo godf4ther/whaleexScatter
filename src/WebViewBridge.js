@@ -21,11 +21,17 @@ export default class WebViewBridge {
           return WebViewBridge.postMessage('eos_signTransaction', payload.id, payload.payload.transaction);
         case 'requestArbitrarySignature':
           return WebViewBridge.postMessage('eos_signMessage', payload.id, payload.payload);
+        case 'authenticate': {
+          return WebViewBridge.postMessage('eos_signMessage', payload.id, {
+            data: payload.payload.nonce,
+            whatfor: 'authenticate',
+            isHash: false,
+          });
+        }
         case 'requestTransfer':
           return WebViewBridge.postMessage('eos_sendTransaction', payload.id, payload.payload);
         case 'getOrRequestIdentity':
-        case 'identityFromPermissions':
-        case 'authenticate': {
+        case 'identityFromPermissions': {
           if (WhaleexIdentitys.isEOSInstall) {
             return WebViewBridge.sendResponse(payload.id, WhaleexIdentitys.eos);
           } else {
