@@ -36,7 +36,8 @@ export default class WhaleexScatter {
 
     if (plugin.isSignatureProvider()) {
       this[plugin.name] = plugin.signatureProvider(noIdFunc, () => this.identity);
-      this[`${plugin.name}Hook`] = plugin.hookProvider;
+      this[plugin.name + 'Hook'] = plugin.hookProvider;
+      if (typeof plugin.multiHook === 'function') this[plugin.name + 'MultiHook'] = plugin.multiHook;
     }
   }
 
@@ -116,6 +117,8 @@ export default class WhaleexScatter {
       return res;
     });
   }
+
+  useIdentity() {}
 
   getIdentity(requiredFields) {
     return WebViewBridge.sendAsync({

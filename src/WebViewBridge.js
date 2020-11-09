@@ -42,6 +42,7 @@ export default class WebViewBridge {
           WhaleexIdentitys.uninstallEOS();
           return WebViewBridge.sendResponse(payload.id, true);
         }
+        case 'linkAccount':
         case 'requestAddNetwork':
           return WebViewBridge.sendResponse(payload.id, true);
         case 'getVersion':
@@ -53,7 +54,6 @@ export default class WebViewBridge {
             WebViewBridge.sendError(payload.id, new Error('User rejected the request'));
           }
         }
-        case 'linkAccount':
         case 'hasAccountFor':
         case 'createTransaction':
           // all resolve to false

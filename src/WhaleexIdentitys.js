@@ -8,6 +8,7 @@ class WhaleexEOSIdentity {
         name: account,
         authority: 'active',
         blockchain: 'eos',
+        publicKey: publicKey,
       },
     ];
     this.kyc = false;
