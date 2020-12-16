@@ -2,7 +2,7 @@ import Plugin from './Plugin';
 import Network from './Network';
 import { Blockchains } from './Blockchains';
 import * as PluginTypes from './PluginTypes';
-import WebViewBridge from './WebViewBridge';
+import EOSBridge from './EOSBridge';
 
 // const ProxyPolyfill = require('./proxyPolyfill');
 
@@ -23,7 +23,7 @@ export default class WhaleexEOS extends Plugin {
       return {
         requiredFields: {},
         getAvailableKeys: async () => {
-          return await WebViewBridge.sendAsync({
+          return await EOSBridge.sendAsync({
             type: 'identityFromPermissions',
             payload: {},
           }).then(id => {
@@ -36,7 +36,7 @@ export default class WhaleexEOS extends Plugin {
           const requiredFields = fieldsFetcher ? fieldsFetcher() : {};
           signargs.serializedTransaction = Buffer.from(signargs.serializedTransaction).toString('hex');
           return new Promise(async (resolve, reject) => {
-            WebViewBridge.sendAsync({
+            EOSBridge.sendAsync({
               type: 'requestSignature',
               payload: { transaction: signargs, blockchain: Blockchains.EOS, network, requiredFields },
             })
@@ -54,7 +54,7 @@ export default class WhaleexEOS extends Plugin {
       return signargs => {
         return new Promise((resolve, reject) => {
           const payload = Object.assign(signargs, { blockchain: Blockchains.EOS, network, requiredFields: {} });
-          WebViewBridge.sendAsync({
+          EOSBridge.sendAsync({
             type: 'requestSignature',
             payload,
           })
@@ -184,7 +184,7 @@ export default class WhaleexEOS extends Plugin {
                   network,
                   requiredFields: requiredFields.requiredFields,
                 });
-                const result = await WebViewBridge.sendAsync({ type: 'requestSignature', payload });
+                const result = await EOSBridge.sendAsync({ type: 'requestSignature', payload });
 
                 // No signature
                 if (!result) return null;

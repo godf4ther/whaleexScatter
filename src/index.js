@@ -1,7 +1,7 @@
 /* global window */
 
 import PluginRepository from './PluginRepository';
-import WebViewBridge from './WebViewBridge';
+import EOSBridge from './EOSBridge';
 import WhaleexEOS from './WhaleexEOS';
 import WhaleexIdentitys from './WhaleexIdentitys';
 
@@ -80,14 +80,14 @@ export default class WhaleexScatter {
   }
 
   getVersion() {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'getVersion',
       payload: {},
     });
   }
 
   login(requiredFields) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'getOrRequestIdentity',
       payload: {
         fields: requiredFields,
@@ -99,7 +99,7 @@ export default class WhaleexScatter {
   }
 
   checkLogin() {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'identityFromPermissions',
       payload: {},
     }).then(id => {
@@ -109,7 +109,7 @@ export default class WhaleexScatter {
   }
 
   logout() {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'forgetIdentity',
       payload: {},
     }).then(res => {
@@ -121,7 +121,7 @@ export default class WhaleexScatter {
   useIdentity() {}
 
   getIdentity(requiredFields) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'getOrRequestIdentity',
       payload: {
         fields: requiredFields,
@@ -133,7 +133,7 @@ export default class WhaleexScatter {
   }
 
   getIdentityFromPermissions() {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'identityFromPermissions',
       payload: {},
     }).then(id => {
@@ -143,7 +143,7 @@ export default class WhaleexScatter {
   }
 
   forgetIdentity() {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'forgetIdentity',
       payload: {},
     }).then(res => {
@@ -153,14 +153,14 @@ export default class WhaleexScatter {
   }
 
   authenticate(nonce) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'authenticate',
       payload: { nonce },
     });
   }
 
   getArbitrarySignature(publicKey, data, whatfor = '', isHash = false) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'requestArbitrarySignature',
       payload: {
         publicKey,
@@ -172,21 +172,21 @@ export default class WhaleexScatter {
   }
 
   getPublicKey(blockchain) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'getPublicKey',
       payload: { blockchain },
     });
   }
 
   linkAccount(publicKey, network) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'linkAccount',
       payload: { publicKey, network },
     });
   }
 
   hasAccountFor(network) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'hasAccountFor',
       payload: {
         network,
@@ -195,7 +195,7 @@ export default class WhaleexScatter {
   }
 
   suggestNetwork(network) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'requestAddNetwork',
       payload: {
         network,
@@ -205,21 +205,21 @@ export default class WhaleexScatter {
 
   requestTransfer(network, to, amount, options = {}) {
     const payload = { network, to, amount, options };
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'requestTransfer',
       payload,
     });
   }
 
   requestSignature(payload) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'requestSignature',
       payload,
     });
   }
 
   createTransaction(blockchain, actions, account, network) {
-    return WebViewBridge.sendAsync({
+    return EOSBridge.sendAsync({
       type: 'createTransaction',
       payload: {
         blockchain,
@@ -233,5 +233,5 @@ export default class WhaleexScatter {
 
 window.WhaleexScatter = WhaleexScatter;
 window.WhaleexEOS = WhaleexEOS;
-window.WebViewBridge = WebViewBridge;
+window.EOSBridge = EOSBridge;
 window.WhaleexIdentitys = WhaleexIdentitys;
