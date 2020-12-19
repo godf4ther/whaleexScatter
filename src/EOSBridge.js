@@ -66,8 +66,8 @@ export default class WebViewBridge {
 
   static requestAccountSuccess(id, result) {
     console.log('requestAccountSuccess', result);
-    const { account, publicKey } = result;
-    WhaleexIdentitys.installEOS(account, publicKey);
+    const { account, publicKey, permission } = result;
+    WhaleexIdentitys.installEOS(account, publicKey, permission);
     const callback = WebViewBridge.callbacks.get(id);
     if (callback) {
       callback(null, WhaleexIdentitys.eos);
